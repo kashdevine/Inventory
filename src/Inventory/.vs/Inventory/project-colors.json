@@ -5,7 +5,17 @@
       "ProjectGuid": "2db250ee-b789-4a07-a0ad-57625bef64e7",
       "DisplayName": "Inventory",
       "ColorIndex": 0
+    },
+    "dea25dc8-2e6b-4063-9c5a-ec3ce82159e6": {
+      "ProjectGuid": "dea25dc8-2e6b-4063-9c5a-ec3ce82159e6",
+      "DisplayName": "docker-compose",
+      "ColorIndex": 1
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Miscellaneous Files",
+      "ColorIndex": -1
     }
   },
-  "NextColorIndex": 1
+  "NextColorIndex": 2
 }
