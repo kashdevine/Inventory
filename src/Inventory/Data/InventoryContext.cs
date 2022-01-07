@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Inventory.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Data
 {
@@ -9,5 +10,11 @@ namespace Inventory.Data
         }
 
         public DbSet<Models.Inventory>? Inventories { get; set; }
+
+        public DbSet<Brand>? Brands { get; set; }
+
+        public DbSet<Category>? Categories { get; set; }
+
+        public DbSet<Vendor>? Vendors { get; set; }
     }
 }
