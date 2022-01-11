@@ -9,5 +9,6 @@ namespace InventoryTests
     public static class Utility
     {
         //TODO  This is where we're going to get the db context by di and seed the data
+        //TODO  Make a method to return an IEnumerable of the Brand type.
     }
 }
