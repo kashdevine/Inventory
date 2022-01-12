@@ -3,12 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Inventory.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace InventoryTests
 {
     public static class Utility
     {
-        //TODO  This is where we're going to get the db context by di and seed the data
-        //TODO  Make a method to return an IEnumerable of the Brand type.
+        
+        public static void SeedDB(DbContext ctx)
+        {
+            //Gets List of Brands
+            IEnumerable<Brand> brands = SeedBrands();
+
+            // Add all the brands to the Db
+            ctx.AddRangeAsync(brands);
+        }
+
+        
+        public static IEnumerable<Brand> SeedBrands()
+        {
+            return new List<Brand>() 
+            { 
+                new Brand(){ Name = "Brand1"},
+                new Brand(){ Name = "Brand2"},
+                new Brand(){ Name = "Brand3"},
+                new Brand(){ Name = "Brand4"},
+            };
+        }
     }
 }
