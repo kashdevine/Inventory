@@ -11,12 +11,13 @@ using Microsoft.Extensions.Configuration;
 
 namespace InventoryTests.BrandTests
 {
-    public class BrandRepositoryUnitTests
+    [Collection("InventoryTests")]
+    public class BrandRepositoryUnitTests : IDisposable
     {
         private readonly IBrandRepository _brandRepository;
         private readonly InventoryContext? _ctx;
 
-        public BrandRepositoryUnitTests(IBrandRepository brandRepository)
+        public BrandRepositoryUnitTests(IBrandRepository brandRepository) 
         {
             ConfigurationManager config = new ConfigurationManager();
 
@@ -26,7 +27,17 @@ namespace InventoryTests.BrandTests
                                                 .UseSqlServer(connString)
                                                 .Options;
             _brandRepository = brandRepository;
+
             InventoryContext _ctx = new InventoryContext(contextOptions);
+        }
+
+        public void Dispose()
+        {
+            _ctx.Database.EnsureDeleted();
+            _ctx.Database.EnsureCreated();
+            Utility.SeedDB(_ctx);
+            _ctx.Dispose();
+
         }
     }
 }
