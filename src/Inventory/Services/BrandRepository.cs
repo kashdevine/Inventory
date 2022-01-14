@@ -1,6 +1,7 @@
 ﻿using Inventory.Contracts;
 using Inventory.Data;
 using Inventory.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
 {
@@ -28,9 +29,10 @@ namespace Inventory.Services
             throw new NotImplementedException();
         }
 
-        public Task<Brand> GetBrandByName(string Name)
+        public async Task<Brand> GetBrandByName(string Name)
         {
-            throw new NotImplementedException();
+            Brand brand = await _ctx.Brands.FirstOrDefaultAsync(b => b.Name == Name);
+            return brand;
         }
 
         public Task<IEnumerable<Brand>> GetBrands()
