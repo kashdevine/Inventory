@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Inventory.Data;
 using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,13 +12,17 @@ namespace InventoryTests
     public static class Utility
     {
         
-        public static void SeedDB(DbContext ctx)
+        public static void SeedDB(InventoryContext ctx)
         {
-            //Gets List of Brands
-            IEnumerable<Brand> brands = SeedBrands();
-
             // Add all the brands to the Db
-            ctx.AddRangeAsync(brands);
+            ctx.Brands.AddRangeAsync(SeedBrands());
+            ctx.SaveChangesAsync();
+        }
+
+        public static void ReinitializeDBForTests(InventoryContext ctx)
+        {
+            ctx.Brands.RemoveRange(ctx.Brands);
+            SeedDB(ctx);
         }
 
         

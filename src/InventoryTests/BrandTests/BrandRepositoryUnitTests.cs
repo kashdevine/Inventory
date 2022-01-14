@@ -1,43 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Inventory.Contracts;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Inventory.Data;
 using Xunit;
-using Microsoft.Extensions.Configuration;
+using Inventory.Models;
+using Inventory.Services;
 
 namespace InventoryTests.BrandTests
 {
     [Collection("InventoryTests")]
-    public class BrandRepositoryUnitTests : IDisposable
+    public class BrandRepositoryUnitTests
     {
-        private readonly IBrandRepository _brandRepository;
-        private readonly InventoryContext? _ctx;
+        private InventoryContext _ctx;
+ 
 
-        public BrandRepositoryUnitTests(IBrandRepository brandRepository) 
+        public BrandRepositoryUnitTests() 
         {
-            ConfigurationManager config = new ConfigurationManager();
-
-            var connString = config.GetConnectionString("TestInventoryDatabase");
-
             var contextOptions = new DbContextOptionsBuilder<InventoryContext>()
-                                                .UseSqlServer(connString)
+                                                .UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=TestInventoryDb;Trusted_Connection=True;MultipleActiveResultSets=true")
                                                 .Options;
-            _brandRepository = brandRepository;
 
-            InventoryContext _ctx = new InventoryContext(contextOptions);
+             _ctx = new InventoryContext(contextOptions);
+            
+
+
         }
 
-        public void Dispose()
+        [Fact]
+        public async void GetBrandByName_Should_ReturnBrand()
         {
-            _ctx.Database.EnsureDeleted();
-            _ctx.Database.EnsureCreated();
-            Utility.SeedDB(_ctx);
-            _ctx.Dispose();
+            //arrange
+            Utility.ReinitializeDBForTests(_ctx);
 
+            string Name = "Brand1";
+            //act
+            Brand result = await new BrandRepository(_ctx).GetBrandByName(Name);
+            //assert
+            Assert.Equal(Name, result.Name);
         }
     }
 }
