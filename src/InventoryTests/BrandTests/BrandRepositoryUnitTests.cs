@@ -36,5 +36,14 @@ namespace InventoryTests.BrandTests
             //assert
             Assert.Equal(Name, result.Name);
         }
+
+        [Fact]
+        public async void GetBrandById_Should_ReturnBrand()
+        {
+            // Arrange
+            // Going to have to get the id of a brand to make sure that the implementation of the fetch function works
+            // Act
+            // Assert
+        }
     }
 }
