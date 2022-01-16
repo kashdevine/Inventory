@@ -12,7 +12,9 @@ namespace Inventory.Contracts
 
         public Task<Brand> CreateBrand(Brand brand);
 
-        public Task<bool> UpdateBrand(Brand brand);
+        public Task<bool> BrandDoesExist(string brandName);
+
+        public Task<Brand> UpdateBrand(Brand brand);
 
         public Task<bool> DeleteBrand(Guid Id);
 

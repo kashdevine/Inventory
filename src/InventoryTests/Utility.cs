@@ -12,17 +12,17 @@ namespace InventoryTests
     public static class Utility
     {
         
-        public static void SeedDB(InventoryContext ctx)
+        public static async Task SeedDB(InventoryContext ctx)
         {
             // Add all the brands to the Db
-            ctx.Brands.AddRangeAsync(SeedBrands());
-            ctx.SaveChangesAsync();
+           await ctx.Brands.AddRangeAsync(SeedBrands());
+           await ctx.SaveChangesAsync();
         }
 
-        public static void ReinitializeDBForTests(InventoryContext ctx)
+        public static async Task ReinitializeDBForTests(InventoryContext ctx)
         {
             ctx.Brands.RemoveRange(ctx.Brands);
-            SeedDB(ctx);
+            await SeedDB(ctx);
         }
 
         
@@ -35,6 +35,13 @@ namespace InventoryTests
                 new Brand(){ Name = "Brand3"},
                 new Brand(){ Name = "Brand4"},
             };
+        }
+
+        public static async Task<Brand> getBrandForId(InventoryContext ctx)
+        {
+            await SeedDB(ctx);
+
+            return ctx.Brands.FirstOrDefault(b => b.Name == "Brand1");
         }
     }
 }
