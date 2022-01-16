@@ -14,19 +14,39 @@ namespace Inventory.Services
             _ctx = ctx;
         }
 
-        public Task<Brand> CreateBrand(Brand brand)
+        public async Task<Brand> CreateBrand(Brand brand)
         {
-            throw new NotImplementedException();
+            if (await BrandDoesExist(brand.Name))
+            {
+                return await _ctx.Brands.FirstOrDefaultAsync(b => b.Name == brand.Name);
+            }
+
+            await _ctx.Brands.AddAsync(brand);
+
+            if (await Save())
+            {
+                return await _ctx.Brands.FirstOrDefaultAsync(b => b.Id == brand.Id);
+            }
+
+            return null;
         }
 
-        public Task<bool> DeleteBrand(Guid Id)
+        public async Task<bool> DeleteBrand(Guid Id)
         {
-            throw new NotImplementedException();
+            if (!await BrandDoesExist(Id))
+            {
+                return await Save();
+            }
+            var deletedBrand = await GetBrandById(Id);
+
+            _ctx.Brands?.Remove(deletedBrand);
+
+            return await Save();
         }
 
-        public Task<Brand> GetBrandById(Guid Id)
+        public async Task<Brand> GetBrandById(Guid Id)
         {
-            throw new NotImplementedException();
+            return await _ctx.Brands.FindAsync(Id);
         }
 
         public async Task<Brand> GetBrandByName(string Name)
@@ -35,19 +55,39 @@ namespace Inventory.Services
             return brand;
         }
 
-        public Task<IEnumerable<Brand>> GetBrands()
+        public async Task<IEnumerable<Brand>> GetBrands()
         {
-            throw new NotImplementedException();
+            return _ctx.Brands.Where(b => b.Name != null);
         }
 
-        public Task<bool> Save()
+        public async Task<bool> Save()
         {
-            throw new NotImplementedException();
+            return await _ctx.SaveChangesAsync() > 0;
         }
 
-        public Task<bool> UpdateBrand(Brand brand)
+        public async Task<Brand> UpdateBrand(Brand brand)
         {
-            throw new NotImplementedException();
+            if (!await BrandDoesExist(brand.Id))
+            {
+                return null;
+            }
+            _ctx.Brands.Update(brand);
+            await Save();
+            return await _ctx.Brands.FirstOrDefaultAsync(b=> b.Id == brand.Id);
+        }
+
+        public async Task<bool> BrandDoesExist(string brandName)
+        {
+            var existing = await GetBrandByName(brandName);
+
+            return existing != null;
+        }
+
+        public async Task<bool> BrandDoesExist(Guid brandId)
+        {
+            var existing = await GetBrandById(brandId);
+
+            return existing != null;
         }
 
     }
