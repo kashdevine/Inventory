@@ -18,7 +18,7 @@ namespace InventoryTests.BrandTests
         public BrandRepositoryUnitTests() 
         {
             var contextOptions = new DbContextOptionsBuilder<InventoryContext>()
-                                                .UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=TestInventoryDb;Trusted_Connection=True;MultipleActiveResultSets=true")
+                                                .UseSqlServer(connectionString:Utility.ConnectionString)
                                                 .Options;
              _ctx = new InventoryContext(contextOptions);
             
