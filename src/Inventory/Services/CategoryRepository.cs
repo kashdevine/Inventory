@@ -1,54 +1,87 @@
 ﻿using Inventory.Contracts;
 using Inventory.Data;
 using Inventory.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
 {
     public class CategoryRepository : ICategoryRepository
     {
         private readonly InventoryContext _ctx;
+
         public CategoryRepository(InventoryContext ctx)
         {
             _ctx = ctx;
         }
-        public Task<bool> CategoryDoesExist(string CategoryName)
+        public async Task<bool> CategoryDoesExist(string CategoryName)
         {
-            throw new NotImplementedException();
+            var existing = await _ctx.Categories.FirstOrDefaultAsync(c => c.Name == CategoryName);
+            return existing != null;
         }
 
-        public Task<Category> CreateCategory(Category Category)
+        public async Task<bool> CategoryDoesExist(Guid CategoryId)
         {
-            throw new NotImplementedException();
+            var existing = await _ctx.Categories.FirstOrDefaultAsync(c => c.Id == CategoryId);
+            return existing != null;
         }
 
-        public Task<bool> DeleteCategory(Guid Id)
+        public async Task<Category> CreateCategory(Category Category)
         {
-            throw new NotImplementedException();
+            if (await CategoryDoesExist(Category.Name))
+            {
+                return await _ctx.Categories.FirstOrDefaultAsync(c => c.Name == Category.Name);
+            }
+
+            await _ctx.Categories.AddAsync(Category);
+
+            if (await Save())
+            {
+                return Category;
+            }
+            return null;
         }
 
-        public Task<IEnumerable<Category>> GetCategories()
+        public async Task<bool> DeleteCategory(Guid Id)
         {
-            throw new NotImplementedException();
+            if (!await CategoryDoesExist(Id))
+            {
+                return await Save();
+            }
+
+            var deletedItem = await GetCategoryById(Id);
+
+            _ctx.Categories?.Remove(deletedItem);
+
+            return await Save();
         }
 
-        public Task<Category> GetCategoryById(Guid Id)
+        public async Task<IEnumerable<Category>> GetCategories()
         {
-            throw new NotImplementedException();
+            return _ctx.Categories.Where(c=> c.Name != null);
         }
 
-        public Task<Category> GetCategoryByName(string Name)
+        public async Task<Category> GetCategoryById(Guid Id)
         {
-            throw new NotImplementedException();
+            return await _ctx.Categories.FirstOrDefaultAsync(c=> c.Id == Id);
         }
 
-        public Task<bool> Save()
+        public async Task<Category> GetCategoryByName(string Name)
         {
-            throw new NotImplementedException();
+            return await _ctx.Categories.FirstOrDefaultAsync(c => c.Name == Name);
         }
 
-        public Task<Category> UpdateCategory(Category Category)
+        public async Task<bool> Save()
         {
-            throw new NotImplementedException();
+            return await _ctx.SaveChangesAsync() > 0;
+        }
+
+        public async Task<Category> UpdateCategory(Category Category)
+        {
+            _ctx.Categories.Update(Category);
+
+            await Save();
+
+            return Category;
         }
     }
 }

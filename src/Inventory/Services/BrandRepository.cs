@@ -73,7 +73,7 @@ namespace Inventory.Services
             }
             _ctx.Brands.Update(brand);
             await Save();
-            return await _ctx.Brands.FirstOrDefaultAsync(b=> b.Id == brand.Id);
+            return brand;
         }
 
         public async Task<bool> BrandDoesExist(string brandName)
