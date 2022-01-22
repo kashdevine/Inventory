@@ -11,7 +11,9 @@ namespace InventoryTests
 {
     public static class Utility
     {
-        
+        public const string ConnectionString = @"Server=(localdb)\mssqllocaldb;Database=TestInventoryDb;Trusted_Connection=True;MultipleActiveResultSets=true";
+
+
         public static async Task SeedDB(InventoryContext ctx)
         {
             // Add all the brands to the Db
