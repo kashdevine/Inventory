@@ -19,6 +19,8 @@ builder.Services.AddDbContext<InventoryContext>(opt =>
 });
 
 builder.Services.AddTransient<IBrandRepository, BrandRepository>();
+builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+builder.Services.AddTransient<IVendorRepository, VendorRepository>();
 
 var app = builder.Build();
 

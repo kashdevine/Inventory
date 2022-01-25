@@ -19,6 +19,7 @@ namespace InventoryTests
             // Add all the brands to the Db
             await ctx.Brands.AddRangeAsync(SeedBrands());
             await ctx.Categories.AddRangeAsync(SeedCategories());
+            await ctx.Vendors.AddRangeAsync(SeedVendors());
             await ctx.SaveChangesAsync();
         }
 
@@ -26,6 +27,7 @@ namespace InventoryTests
         {
             ctx.Brands.RemoveRange(ctx.Brands);
             ctx.Categories.RemoveRange(ctx.Categories);
+            ctx.Vendors.RemoveRange(ctx.Vendors);
             await SeedDB(ctx);
         }
 
@@ -52,10 +54,15 @@ namespace InventoryTests
             };
         }
 
-        public static async Task<Category> GetCategoryForId(InventoryContext ctx)
+        public static IEnumerable<Vendor> SeedVendors()
         {
-            await SeedDB(ctx);
-            return await ctx.Categories.FirstOrDefaultAsync(c => c.Name == "Category1");
+            return new List<Vendor>()
+            {
+                new Vendor(){ Name = "Vendor1"},
+                new Vendor(){ Name = "Vendor2"},
+                new Vendor(){ Name = "Vendor3"},
+                new Vendor(){ Name = "Vendor4"},
+            };
         }
 
         public static async Task<Brand> getBrandForId(InventoryContext ctx)
@@ -63,6 +70,18 @@ namespace InventoryTests
             await SeedDB(ctx);
 
             return await ctx.Brands.FirstOrDefaultAsync(b => b.Name == "Brand1");
+        }
+        public static async Task<Category> GetCategoryForId(InventoryContext ctx)
+        {
+            await SeedDB(ctx);
+            return await ctx.Categories.FirstOrDefaultAsync(c => c.Name == "Category1");
+        }
+
+
+        public static async Task<Vendor> GetVendorForId(InventoryContext ctx)
+        {
+            await SeedDB(ctx);
+            return await ctx.Vendors.FirstOrDefaultAsync(c => c.Name == "Vendor1");
         }
     }
 }
