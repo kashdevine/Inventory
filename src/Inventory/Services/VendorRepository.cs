@@ -1,53 +1,102 @@
 ﻿using Inventory.Contracts;
+using Inventory.Data;
 using Inventory.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
 {
     public class VendorRepository : IVendorRepository
     {
-        public Task<Vendor> CreateVendor(Vendor Vendor)
+        private readonly InventoryContext _ctx;
+        public VendorRepository(InventoryContext ctx)
         {
-            throw new NotImplementedException();
+            _ctx = ctx;
+        }
+        public async Task<Vendor> CreateVendor(Vendor Vendor)
+        {
+            if (Vendor == null)
+            {
+                throw new ArgumentNullException(nameof(Vendor));
+            }
+
+            if (await VendorDoesExist(Vendor.Id))
+            {
+                return await GetVendorById(Vendor.Id);
+            }
+
+            _ctx.Vendors!.Add(Vendor);
+            await Save();
+
+            return Vendor;
         }
 
-        public Task<bool> DeleteVendor(Guid Id)
+        public async Task<bool> DeleteVendor(Guid Id)
         {
-            throw new NotImplementedException();
+            if (! await VendorDoesExist(Id))
+            {
+                return await Save();
+            }
+            var vendorToDelete = await GetVendorById(Id);
+
+            _ctx.Vendors!.Remove(vendorToDelete);
+
+            return await Save();
         }
 
-        public Task<Vendor> GetVendorById(Guid Id)
+        public async Task<Vendor> GetVendorById(Guid Id)
         {
-            throw new NotImplementedException();
+            return await _ctx.Vendors.FirstOrDefaultAsync(x => x.Id == Id);
         }
 
-        public Task<Vendor> GetVendorByName(string Name)
+        public async Task<Vendor> GetVendorByName(string Name)
         {
-            throw new NotImplementedException();
+            return await _ctx.Vendors.FirstOrDefaultAsync(v=> v.Name == Name);
         }
 
-        public Task<IEnumerable<Vendor>> GetVendors()
+        public async Task<IEnumerable<Vendor>> GetVendors()
         {
-            throw new NotImplementedException();
+            return  _ctx.Vendors.Where(v => v.Name != null);
         }
 
-        public Task<bool> Save()
+        public async Task<bool> Save()
         {
-            throw new NotImplementedException();
+            return await _ctx.SaveChangesAsync() > 0;
         }
 
-        public Task<Vendor> UpdateVendor(Vendor Vendor)
+        public async Task<Vendor> UpdateVendor(Vendor Vendor)
         {
-            throw new NotImplementedException();
+            if (Vendor == null)
+            {
+                throw new ArgumentNullException(nameof(Vendor));
+            }
+
+            if (!await VendorDoesExist(Vendor.Id))
+            {
+                return null;
+            }
+
+            _ctx.Vendors!.Update(Vendor);
+
+            if (await Save())
+            {
+                return Vendor;
+            }
+
+
+            return null;
+
         }
 
-        public Task<bool> VendorDoesExist(string VendorName)
+        public async Task<bool> VendorDoesExist(string VendorName)
         {
-            throw new NotImplementedException();
+            var existing = await _ctx.Vendors.FirstOrDefaultAsync(v => v.Name == VendorName);
+            return existing != null;
         }
 
-        public Task<bool> VendorDoesExist(Guid VendorId)
+        public async Task<bool> VendorDoesExist(Guid VendorId)
         {
-            throw new NotImplementedException();
+            var existing = await _ctx.Vendors.FirstOrDefaultAsync(v => v.Id == VendorId);
+            return existing != null;
         }
     }
 }
