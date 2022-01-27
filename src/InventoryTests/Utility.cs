@@ -16,15 +16,20 @@ namespace InventoryTests
 
         public static async Task SeedDB(InventoryContext ctx)
         {
-            // Add all the brands to the Db
-            await ctx.Brands.AddRangeAsync(SeedBrands());
-            await ctx.Categories.AddRangeAsync(SeedCategories());
-            await ctx.Vendors.AddRangeAsync(SeedVendors());
+            // Add all the samples to the Db
+            await ctx.Brands!.AddRangeAsync(SeedBrands());
+            await ctx.Categories!.AddRangeAsync(SeedCategories());
+            await ctx.Vendors!.AddRangeAsync(SeedVendors());
             await ctx.SaveChangesAsync();
         }
 
         public static async Task ReinitializeDBForTests(InventoryContext ctx)
         {
+            if (! ctx.Database.CanConnect())
+            {
+                await ctx.Database.EnsureCreatedAsync();
+            }
+
             ctx.Brands.RemoveRange(ctx.Brands);
             ctx.Categories.RemoveRange(ctx.Categories);
             ctx.Vendors.RemoveRange(ctx.Vendors);

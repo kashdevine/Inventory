@@ -32,7 +32,10 @@ namespace Inventory.Services
                 return await _ctx.Categories.FirstOrDefaultAsync(c => c.Name == Category.Name);
             }
 
+            // TODO: Add created time
+
             await _ctx.Categories.AddAsync(Category);
+
 
             if (await Save())
             {
@@ -77,7 +80,19 @@ namespace Inventory.Services
 
         public async Task<Category> UpdateCategory(Category Category)
         {
-            _ctx.Categories.Update(Category);
+            if (Category == null)
+            {
+                throw new ArgumentNullException(nameof(Category));
+            }
+
+            if (! await CategoryDoesExist(Category.Id))
+            {
+                throw new ArgumentException(nameof(Category));
+            }
+            
+            Category.LastUpdated = DateTime.UtcNow;
+
+            _ctx.Categories!.Update(Category);
 
             await Save();
 

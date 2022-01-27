@@ -24,6 +24,9 @@ namespace Inventory.Services
                 return await GetVendorById(Vendor.Id);
             }
 
+            Vendor.CreatedAt = DateTime.UtcNow;
+            Vendor.LastUpdated = DateTime.UtcNow;
+
             _ctx.Vendors!.Add(Vendor);
             await Save();
 
@@ -72,8 +75,10 @@ namespace Inventory.Services
 
             if (!await VendorDoesExist(Vendor.Id))
             {
-                return null;
+                throw new ArgumentException(nameof(Category));
             }
+
+            Vendor.LastUpdated = DateTime.UtcNow;
 
             _ctx.Vendors!.Update(Vendor);
 
