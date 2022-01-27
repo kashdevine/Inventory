@@ -14,18 +14,27 @@ namespace Inventory.Services
             _ctx = ctx;
         }
 
-        public async Task<Brand> CreateBrand(Brand brand)
+        public async Task<Brand> CreateBrand(Brand Brand)
         {
-            if (await BrandDoesExist(brand.Name))
+            if (Brand == null)
             {
-                return await _ctx.Brands.FirstOrDefaultAsync(b => b.Name == brand.Name);
+                throw new ArgumentNullException(nameof(Brand));
+            }
+            if (await BrandDoesExist(Brand.Name))
+            {
+                return await _ctx.Brands.FirstOrDefaultAsync(b => b.Name == Brand.Name);
             }
 
-            await _ctx.Brands.AddAsync(brand);
+            
+            
+            Brand.CreatedAt = DateTime.UtcNow;
+            Brand.LastUpdated = DateTime.UtcNow;
+
+            await _ctx.Brands!.AddAsync(Brand);
 
             if (await Save())
             {
-                return await _ctx.Brands.FirstOrDefaultAsync(b => b.Id == brand.Id);
+                return await _ctx.Brands.FirstOrDefaultAsync(b => b.Id == Brand.Id);
             }
 
             return null;
@@ -46,13 +55,23 @@ namespace Inventory.Services
 
         public async Task<Brand> GetBrandById(Guid Id)
         {
+            if (Id == null)
+            {
+                throw new ArgumentException(nameof(Id));
+            }
+
             return await _ctx.Brands.FindAsync(Id);
         }
 
         public async Task<Brand> GetBrandByName(string Name)
         {
-            Brand brand = await _ctx.Brands.FirstOrDefaultAsync(b => b.Name == Name);
-            return brand;
+            if (string.IsNullOrEmpty(Name))
+            {
+                throw new ArgumentException(nameof(Name));
+            }
+
+            Brand Brand = await _ctx.Brands.FirstOrDefaultAsync(b => b.Name == Name);
+            return Brand;
         }
 
         public async Task<IEnumerable<Brand>> GetBrands()
@@ -65,27 +84,38 @@ namespace Inventory.Services
             return await _ctx.SaveChangesAsync() > 0;
         }
 
-        public async Task<Brand> UpdateBrand(Brand brand)
+        public async Task<Brand> UpdateBrand(Brand Brand)
         {
-            if (!await BrandDoesExist(brand.Id))
+            if (Brand == null)
             {
-                return null;
+                throw new ArgumentNullException(nameof(Brand));
             }
-            _ctx.Brands.Update(brand);
+            if (!await BrandDoesExist(Brand.Id))
+            {
+                throw new ArgumentException(nameof(Brand));
+            }
+        
+            
+            Brand.LastUpdated = DateTime.UtcNow;
+            _ctx.Brands!.Update(Brand);
             await Save();
-            return brand;
+            return Brand;
         }
 
-        public async Task<bool> BrandDoesExist(string brandName)
+        public async Task<bool> BrandDoesExist(string BrandName)
         {
-            var existing = await GetBrandByName(brandName);
+            if (string.IsNullOrEmpty(BrandName))
+            {
+                throw new ArgumentException(nameof(BrandName));
+            }
+            var existing = await GetBrandByName(BrandName);
 
             return existing != null;
         }
 
-        public async Task<bool> BrandDoesExist(Guid brandId)
+        public async Task<bool> BrandDoesExist(Guid BrandId)
         {
-            var existing = await GetBrandById(brandId);
+            var existing = await GetBrandById(BrandId);
 
             return existing != null;
         }

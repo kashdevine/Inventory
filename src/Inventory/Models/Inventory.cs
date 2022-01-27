@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Inventory.Models
 {
@@ -13,6 +14,7 @@ namespace Inventory.Models
         public string? Description { get; set; }
 
         [Display(Name ="Per Unit Cost")]
+        [Required(ErrorMessage = "Per Unit Cost Needed for Item.")]
         public decimal PerUnitCost { get; set; }
 
         public string? SKU { get; set; }
@@ -31,6 +33,7 @@ namespace Inventory.Models
 
         public int Quantity { get; set; }
 
+        [Required(ErrorMessage = "Price Needed for Item.")]
         public decimal Price { get; set; }
 
         public int Variant { get; set; }
@@ -47,7 +50,6 @@ namespace Inventory.Models
         [Display(Name = "Maximum Stock Threshold")]
         public int? MaxStockThreshold { get; set; }
 
-        [Required]
         public DateTime Created { get; set; }
 
         public DateTime Updated { get; set; }
@@ -55,12 +57,15 @@ namespace Inventory.Models
 
 
         public Guid BrandId { get; set; }
+        [ForeignKey("BrandId")]
         public Brand? Brand { get; set; }
 
         public Guid CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
         public Category? Category { get; set; }
 
         public Guid VendorId { get; set; }
+        [ForeignKey("VendorId")]
         public Vendor? Vendor { get; set; }
 
 

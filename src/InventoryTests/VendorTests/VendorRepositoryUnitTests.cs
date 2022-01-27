@@ -11,6 +11,7 @@ using Xunit;
 
 namespace InventoryTests.VendorTests
 {
+    [Collection("InventoryTests")]
     public class VendorRepositoryUnitTests
     {
         private InventoryContext _ctx;

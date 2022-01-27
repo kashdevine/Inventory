@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Inventory.Models
 {
@@ -10,6 +9,11 @@ namespace Inventory.Models
         [Required(ErrorMessage ="Vendor must have name.")]
         public string? Name { get; set; }
 
-        public ICollection<Inventory>? InventoryCollection { get; set; }
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime LastUpdated { get; set; }
+
+        ICollection<Guid>? InventoryIds { get; set; }
+        public Inventory? Inventory { get; set; }
     }
 }
