@@ -20,6 +20,7 @@ namespace InventoryTests
             await ctx.Brands!.AddRangeAsync(SeedBrands());
             await ctx.Categories!.AddRangeAsync(SeedCategories());
             await ctx.Vendors!.AddRangeAsync(SeedVendors());
+            await ctx.Items!.AddRangeAsync(SeedItems());
             await ctx.SaveChangesAsync();
         }
 
@@ -30,6 +31,7 @@ namespace InventoryTests
                 await ctx.Database.EnsureCreatedAsync();
             }
 
+            ctx.Items.RemoveRange(ctx.Items);
             ctx.Brands.RemoveRange(ctx.Brands);
             ctx.Categories.RemoveRange(ctx.Categories);
             ctx.Vendors.RemoveRange(ctx.Vendors);
@@ -44,7 +46,7 @@ namespace InventoryTests
                 new Brand(){ Name = "Brand1"},
                 new Brand(){ Name = "Brand2"},
                 new Brand(){ Name = "Brand3"},
-                new Brand(){ Name = "Brand4"},
+                new Brand(){ Name = "Brand4"}
             };
         }
 
@@ -55,7 +57,7 @@ namespace InventoryTests
                 new Category(){ Name = "Category1"},
                 new Category(){ Name = "Category2"},
                 new Category(){ Name = "Category3"},
-                new Category(){ Name = "Category4"},
+                new Category(){ Name = "Category4"}
             };
         }
 
@@ -66,7 +68,24 @@ namespace InventoryTests
                 new Vendor(){ Name = "Vendor1"},
                 new Vendor(){ Name = "Vendor2"},
                 new Vendor(){ Name = "Vendor3"},
-                new Vendor(){ Name = "Vendor4"},
+                new Vendor(){ Name = "Vendor4"}
+            };
+        }
+
+        public static IEnumerable<Item> SeedItems()
+        {
+            return new List<Item>()
+            {
+                new Item(){ Name = "Item1", PerUnitCost = 0, Price = 100, IsDigital = true},
+                new Item(){ Name = "Item2", PerUnitCost = 20, Price = 100, IsDigital = true},
+                new Item(){ Name = "Item3", PerUnitCost = 20, Price = 100, 
+                            IsDigital = false, AvailableStock = 10, RestockThreshold = 3,
+                            Length = 10, Height = 10, Width = 10,
+                            Weight = 300},
+                new Item(){ Name = "Item4", PerUnitCost = 20, Price = 100,
+                            IsDigital = false, AvailableStock = 5, RestockThreshold = 5,
+                            Length = 10, Height = 10, Width = 10,
+                            Weight = 300}
             };
         }
 
@@ -87,6 +106,12 @@ namespace InventoryTests
         {
             await SeedDB(ctx);
             return await ctx.Vendors.FirstOrDefaultAsync(c => c.Name == "Vendor1");
+        }
+
+        public static async Task<Vendor> GetItemForId(InventoryContext ctx)
+        {
+            await SeedDB(ctx);
+            return await ctx.Vendors.FirstOrDefaultAsync(c => c.Name == "Item1");
         }
     }
 }

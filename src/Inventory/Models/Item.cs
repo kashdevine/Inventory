@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Inventory.Models
 {
-    public class Inventory
+    public class Item
     {
         public Guid Id { get; set; }
 

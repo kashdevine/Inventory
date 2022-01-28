@@ -13,7 +13,7 @@ namespace Inventory.Models
 
         public DateTime LastUpdated { get; set; }
 
-        ICollection<Guid>? InventoryIds { get; set; }
-        public Inventory? Inventory { get; set; }
+        ICollection<Guid>? ItemIds { get; set; }
+        public Item? Item { get; set; }
     }
 }

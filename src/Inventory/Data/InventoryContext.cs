@@ -9,7 +9,7 @@ namespace Inventory.Data
         {
         }
 
-        public DbSet<Models.Inventory>? Inventories { get; set; }
+        public DbSet<Item>? Items { get; set; }
 
         public DbSet<Brand>? Brands { get; set; }
 
