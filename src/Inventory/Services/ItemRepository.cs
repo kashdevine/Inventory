@@ -1,6 +1,7 @@
 ﻿using Inventory.Contracts;
 using Inventory.Data;
 using Inventory.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
 {
@@ -12,49 +13,97 @@ namespace Inventory.Services
         {
             _ctx = ctx;
         }
-        public Task<Item> CreateItem(Item Item)
+        public async Task<Item> CreateItem(Item Item)
         {
-            throw new NotImplementedException();
+            if (Item == null)
+            {
+                throw new ArgumentNullException(nameof(Item));
+            }
+
+            if (await ItemDoesExist(Item.Name))
+            {
+                return await GetItemByName(Item.Name);
+            }
+
+            await _ctx.AddAsync(Item);
+
+            
+            if (await Save())
+            {
+                return Item;
+            }
+
+            return null;
         }
 
-        public Task<bool> DeleteItem(Guid Id)
+        public async Task<bool> DeleteItem(Guid Id)
         {
-            throw new NotImplementedException();
+            if (Id == null)
+            {
+                throw new ArgumentNullException(nameof(Id));
+            }
+
+            if (! await ItemDoesExist(Id))
+            {
+                return false;
+            }
+
+            _ctx.Items.Remove(await GetItemById(Id));
+            return await Save();
         }
 
-        public Task<Item> GetItemById(Guid Id)
+        public async Task<Item> GetItemById(Guid Id)
         {
-            throw new NotImplementedException();
+            return await _ctx.Items.FirstOrDefaultAsync(i => i.Id == Id);
+
         }
 
-        public Task<Item> GetItemByName(string Name)
+        public async Task<Item> GetItemByName(string Name)
         {
-            throw new NotImplementedException();
+            return await _ctx.Items.FirstOrDefaultAsync(x => x.Name == Name);
         }
 
-        public Task<IEnumerable<Item>> GetItems()
+        public async Task<IEnumerable<Item>> GetItems()
         {
-            throw new NotImplementedException();
+            return _ctx.Items.Where(i => i.Name != null);
         }
 
-        public Task<bool> ItemDoesExist(string ItemName)
+        public async Task<bool> ItemDoesExist(string ItemName)
         {
-            throw new NotImplementedException();
+            return await _ctx.Items.AnyAsync(i => i.Name == ItemName);
         }
 
-        public Task<bool> ItemDoesExist(Guid ItemId)
+        public async Task<bool> ItemDoesExist(Guid ItemId)
         {
-            throw new NotImplementedException();
+            
+            return await _ctx.Items.AnyAsync(i=> i.Id == ItemId); 
         }
 
-        public Task<bool> Save()
+        public async Task<bool> Save()
         {
-            throw new NotImplementedException();
+            return await _ctx.SaveChangesAsync() > 0;
         }
 
-        public Task<Item> UpdateItem(Item Item)
+        public async Task<Item> UpdateItem(Item Item)
         {
-            throw new NotImplementedException();
+            if (Item == null)
+            {
+                throw new ArgumentNullException(nameof(Item));
+            }
+
+            if (! await ItemDoesExist(Item.Id))
+            {
+                throw new ArgumentException(nameof(Item));
+            }
+
+            _ctx.Items.Update(Item);
+            
+            if (await Save())
+            {
+                return Item;
+            }
+
+            return null;
         }
     }
 }

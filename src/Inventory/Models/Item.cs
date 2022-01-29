@@ -56,16 +56,16 @@ namespace Inventory.Models
 
 
 
-        public Guid BrandId { get; set; }
-        [ForeignKey("BrandId")]
+        public Guid? BrandId { get; set; }
+
         public Brand? Brand { get; set; }
 
-        public Guid CategoryId { get; set; }
-        [ForeignKey("CategoryId")]
+        public Guid? CategoryId { get; set; }
+
         public Category? Category { get; set; }
 
-        public Guid VendorId { get; set; }
-        [ForeignKey("VendorId")]
+        public Guid? VendorId { get; set; }
+
         public Vendor? Vendor { get; set; }
 
 

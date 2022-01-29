@@ -31,10 +31,10 @@ namespace InventoryTests
                 await ctx.Database.EnsureCreatedAsync();
             }
 
-            ctx.Items.RemoveRange(ctx.Items);
             ctx.Brands.RemoveRange(ctx.Brands);
             ctx.Categories.RemoveRange(ctx.Categories);
             ctx.Vendors.RemoveRange(ctx.Vendors);
+            ctx.Items.RemoveRange(ctx.Items);
             await SeedDB(ctx);
         }
 
@@ -71,47 +71,47 @@ namespace InventoryTests
                 new Vendor(){ Name = "Vendor4"}
             };
         }
-
         public static IEnumerable<Item> SeedItems()
         {
+
             return new List<Item>()
             {
-                new Item(){ Name = "Item1", PerUnitCost = 0, Price = 100, IsDigital = true},
-                new Item(){ Name = "Item2", PerUnitCost = 20, Price = 100, IsDigital = true},
-                new Item(){ Name = "Item3", PerUnitCost = 20, Price = 100, 
+                new Item(){ Name = "Item1", Description="Item1 Description", PerUnitCost = 0, Price = 100, IsDigital = true},
+                new Item(){ Name = "Item2", Description="Item2 Description", PerUnitCost = 20, Price = 100, IsDigital = true},
+                new Item(){ Name = "Item3", Description="Item3 Description", PerUnitCost = 20, Price = 100,
                             IsDigital = false, AvailableStock = 10, RestockThreshold = 3,
                             Length = 10, Height = 10, Width = 10,
                             Weight = 300},
-                new Item(){ Name = "Item4", PerUnitCost = 20, Price = 100,
+                new Item(){ Name = "Item4", Description="Item4 Description", PerUnitCost = 20, Price = 100,
                             IsDigital = false, AvailableStock = 5, RestockThreshold = 5,
                             Length = 10, Height = 10, Width = 10,
                             Weight = 300}
             };
         }
 
-        public static async Task<Brand> getBrandForId(InventoryContext ctx)
+        public static async Task<Brand> getBrandForId(InventoryContext ctx, string BrandName = "Brand1")
         {
             await SeedDB(ctx);
 
-            return await ctx.Brands.FirstOrDefaultAsync(b => b.Name == "Brand1");
+            return await ctx.Brands.FirstOrDefaultAsync(b => b.Name == BrandName);
         }
-        public static async Task<Category> GetCategoryForId(InventoryContext ctx)
+        public static async Task<Category> GetCategoryForId(InventoryContext ctx, string CategoryName = "Category1")
         {
             await SeedDB(ctx);
-            return await ctx.Categories.FirstOrDefaultAsync(c => c.Name == "Category1");
-        }
-
-
-        public static async Task<Vendor> GetVendorForId(InventoryContext ctx)
-        {
-            await SeedDB(ctx);
-            return await ctx.Vendors.FirstOrDefaultAsync(c => c.Name == "Vendor1");
+            return await ctx.Categories.FirstOrDefaultAsync(c => c.Name == CategoryName);
         }
 
-        public static async Task<Vendor> GetItemForId(InventoryContext ctx)
+
+        public static async Task<Vendor> GetVendorForId(InventoryContext ctx, string VendorName = "Vendor1")
         {
             await SeedDB(ctx);
-            return await ctx.Vendors.FirstOrDefaultAsync(c => c.Name == "Item1");
+            return await ctx.Vendors.FirstOrDefaultAsync(c => c.Name == VendorName);
+        }
+
+        public static async Task<Item> GetItemForId(InventoryContext ctx)
+        {
+            await SeedDB(ctx);
+            return await ctx.Items.FirstOrDefaultAsync(c => c.Name == "Item1");
         }
     }
 }
