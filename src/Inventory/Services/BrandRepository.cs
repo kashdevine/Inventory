@@ -108,16 +108,18 @@ namespace Inventory.Services
             {
                 throw new ArgumentException(nameof(BrandName));
             }
-            var existing = await GetBrandByName(BrandName);
 
-            return existing != null;
+            return await _ctx.Brands.AnyAsync(b=> b.Name == BrandName);
         }
 
         public async Task<bool> BrandDoesExist(Guid BrandId)
         {
-            var existing = await GetBrandById(BrandId);
+            if (BrandId == null)
+            {
+                throw new ArgumentNullException(nameof(BrandId));
+            }
 
-            return existing != null;
+            return await _ctx.Brands.AnyAsync(b => b.Id == BrandId);
         }
 
     }

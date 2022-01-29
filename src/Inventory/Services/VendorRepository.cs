@@ -94,14 +94,22 @@ namespace Inventory.Services
 
         public async Task<bool> VendorDoesExist(string VendorName)
         {
-            var existing = await _ctx.Vendors.FirstOrDefaultAsync(v => v.Name == VendorName);
-            return existing != null;
+            if (string.IsNullOrEmpty(VendorName))
+            {
+                throw new ArgumentException(nameof(VendorName));
+            }
+
+            return await _ctx.Vendors.AnyAsync(i => i.Name == VendorName);
         }
 
         public async Task<bool> VendorDoesExist(Guid VendorId)
         {
-            var existing = await _ctx.Vendors.FirstOrDefaultAsync(v => v.Id == VendorId);
-            return existing != null;
+            if (VendorId == null)
+            {
+                throw new ArgumentNullException(nameof(VendorId));
+            }
+            return await _ctx.Vendors.AnyAsync(i => i.Id == VendorId);
+
         }
     }
 }

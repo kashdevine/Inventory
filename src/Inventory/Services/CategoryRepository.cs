@@ -15,14 +15,24 @@ namespace Inventory.Services
         }
         public async Task<bool> CategoryDoesExist(string CategoryName)
         {
-            var existing = await _ctx.Categories.FirstOrDefaultAsync(c => c.Name == CategoryName);
-            return existing != null;
+            if (string.IsNullOrEmpty(CategoryName))
+            {
+                throw new ArgumentException(nameof(CategoryName));
+            }
+
+            return  await _ctx.Categories.AnyAsync(c => c.Name == CategoryName);
+            
         }
 
         public async Task<bool> CategoryDoesExist(Guid CategoryId)
         {
-            var existing = await _ctx.Categories.FirstOrDefaultAsync(c => c.Id == CategoryId);
-            return existing != null;
+            if (CategoryId == null)
+            {
+                throw new ArgumentNullException(nameof(CategoryId));
+            }
+
+            return await _ctx.Categories.AnyAsync(c => c.Id == CategoryId);
+
         }
 
         public async Task<Category> CreateCategory(Category Category)
