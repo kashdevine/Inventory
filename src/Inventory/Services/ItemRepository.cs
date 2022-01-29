@@ -70,12 +70,21 @@ namespace Inventory.Services
 
         public async Task<bool> ItemDoesExist(string ItemName)
         {
+            if (string.IsNullOrEmpty(ItemName))
+            {
+                throw new ArgumentException(nameof(ItemName));
+            }
+
             return await _ctx.Items.AnyAsync(i => i.Name == ItemName);
         }
 
         public async Task<bool> ItemDoesExist(Guid ItemId)
         {
-            
+            if (ItemId == null)
+            {
+                throw new ArgumentNullException(nameof(ItemId));
+            }
+
             return await _ctx.Items.AnyAsync(i=> i.Id == ItemId); 
         }
 
