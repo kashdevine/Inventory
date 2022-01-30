@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
 {
+    /// <inheritdoc cref="IBrandRepository"/>
     public class BrandRepository : IBrandRepository
     {
         private readonly InventoryContext _ctx;
@@ -76,7 +77,7 @@ namespace Inventory.Services
 
         public async Task<IEnumerable<Brand>> GetBrands()
         {
-            return _ctx.Brands.Where(b => b.Name != null);
+            return await _ctx.Brands.Where(b => b.Name != null).ToListAsync();
         }
 
         public async Task<bool> Save()
@@ -106,12 +107,18 @@ namespace Inventory.Services
         {
             if (string.IsNullOrEmpty(BrandName))
             {
-                throw new ArgumentException(nameof(BrandName));
+                throw new ArgumentNullException(nameof(BrandName));
             }
 
             return await _ctx.Brands.AnyAsync(b=> b.Name == BrandName);
         }
 
+        /// <summary>
+        /// Check whether a brand exists in the database.
+        /// </summary>
+        /// <param name="BrandId">A Guid.</param>
+        /// <returns>A boolean</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public async Task<bool> BrandDoesExist(Guid BrandId)
         {
             if (BrandId == null)

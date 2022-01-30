@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
 {
+    /// <summary>
+    /// <inheritdoc cref="IVendorRepository"/>
+    /// </summary>
     public class VendorRepository : IVendorRepository
     {
         private readonly InventoryContext _ctx;
@@ -58,7 +61,7 @@ namespace Inventory.Services
 
         public async Task<IEnumerable<Vendor>> GetVendors()
         {
-            return  _ctx.Vendors.Where(v => v.Name != null);
+            return await _ctx.Vendors.Where(v => v.Name != null).ToListAsync();
         }
 
         public async Task<bool> Save()

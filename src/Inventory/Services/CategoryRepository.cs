@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
 {
+    /// <summary>
+    /// <inheritdoc cref="ICategoryRepository"/>
+    /// </summary>
     public class CategoryRepository : ICategoryRepository
     {
         private readonly InventoryContext _ctx;
@@ -23,7 +26,12 @@ namespace Inventory.Services
             return  await _ctx.Categories.AnyAsync(c => c.Name == CategoryName);
             
         }
-
+        /// <summary>
+        /// Checks whether a category exists by its Id.
+        /// </summary>
+        /// <param name="CategoryId">A Guid.</param>
+        /// <returns>A boolean.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public async Task<bool> CategoryDoesExist(Guid CategoryId)
         {
             if (CategoryId == null)
@@ -42,7 +50,8 @@ namespace Inventory.Services
                 return await _ctx.Categories.FirstOrDefaultAsync(c => c.Name == Category.Name);
             }
 
-            // TODO: Add created time
+            Category.CreatedAt = DateTime.UtcNow;
+            Category.LastUpdated = DateTime.UtcNow;
 
             await _ctx.Categories.AddAsync(Category);
 

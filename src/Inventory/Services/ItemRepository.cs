@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
 {
+    /// <summary>
+    /// <inheritdoc cref="IItemRepository"/>
+    /// </summary>
     public class ItemRepository : IItemRepository
     {
         private readonly InventoryContext _ctx;
@@ -65,7 +68,7 @@ namespace Inventory.Services
 
         public async Task<IEnumerable<Item>> GetItems()
         {
-            return _ctx.Items.Where(i => i.Name != null);
+            return await _ctx.Items.Where(i => i.Name != null).ToListAsync();
         }
 
         public async Task<bool> ItemDoesExist(string ItemName)
