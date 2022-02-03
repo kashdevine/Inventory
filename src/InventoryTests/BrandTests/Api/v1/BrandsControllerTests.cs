@@ -9,6 +9,7 @@ using Inventory.Contracts;
 using Inventory.Models;
 using Inventory.Controllers.Api.v1;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace InventoryTests.BrandTests.Api.v1
 {
@@ -22,9 +23,12 @@ namespace InventoryTests.BrandTests.Api.v1
             var MockBrandRepo = new Mock<IBrandRepository>();
             MockBrandRepo.Setup(br => br.GetBrands()).Returns(SeedBrandsAsync());
 
-            var BrandRepo = MockBrandRepo.Object;
+            var MockLogger = new Mock<ILogger<BrandsController>>();
 
-            var _brandsController = new BrandsController(BrandRepo);
+            var BrandRepo = MockBrandRepo.Object;
+            var LoggerInjection = MockLogger.Object;
+
+            var _brandsController = new BrandsController(BrandRepo, LoggerInjection);
 
             //act
             var result = await _brandsController.GetBrands();
