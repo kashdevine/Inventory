@@ -50,15 +50,23 @@ namespace Inventory.Controllers.Api.v1
 
             catch (Exception e)
             {
-                _logger.LogError(exception:e, String.Format("Could not return brands for {0}", nameof(GetBrands)));
+                _logger.LogError(exception: e, String.Format("Could not return brands for {0}", nameof(GetBrands)));
 
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-            //TODO: Add Try Catch
 
             return Ok(brands);
         }
-        //TODO: Get By ID
+
+
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAction(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+
         //TODO: Create
         //TODO: Update
         //TODO: Delete
