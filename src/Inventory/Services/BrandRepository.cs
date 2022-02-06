@@ -35,7 +35,7 @@ namespace Inventory.Services
 
             if (await Save())
             {
-                return await _ctx.Brands.FirstOrDefaultAsync(b => b.Id == Brand.Id);
+                return Brand;
             }
 
             return null;
