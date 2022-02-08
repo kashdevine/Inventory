@@ -107,7 +107,7 @@ namespace Inventory.Controllers.Api.v1
                 Brand brand = createDTO.Adapt<Brand>();
                 var createdBrand = await _brandRepository.CreateBrand(brand);
 
-                return CreatedAtAction(nameof(CreateBrand), createdBrand);
+                return CreatedAtAction(nameof(CreateBrand), createdBrand.Adapt<BrandGetResponseDTO>());
             }
 
             catch(Exception e)
@@ -141,7 +141,7 @@ namespace Inventory.Controllers.Api.v1
                 var brand = updateDTO.Adapt<Brand>();
                 var updatedBrand = await _brandRepository.UpdateBrand(brand);
 
-                return Ok(updatedBrand);
+                return Ok(updatedBrand.Adapt<BrandGetResponseDTO>());
             }
             catch (Exception e)
             {
