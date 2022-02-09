@@ -3,9 +3,13 @@ using Inventory.Models;
 using Inventory.Models.DTOs.Category;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Mapster;
 
 namespace Inventory.Controllers.Api.v1
 {
+    /// <summary>
+    /// API endpoints for the categores.
+    /// </summary>
     [Route("api/v1/[controller]")]
     [ApiController]
     public class CategoriesController : ControllerBase
@@ -19,11 +23,33 @@ namespace Inventory.Controllers.Api.v1
             _logger = logger;
         }
 
-        
+        /// <summary>
+        /// Gets all categories.
+        /// </summary>
+        /// <returns>A list of categories.</returns>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<CategoryGetResponeDTO>>> GetCategories()
         {
-            throw new NotImplementedException();
+            var categories = new List<CategoryGetResponeDTO>();
+            try
+            {
+                var allCategories = await _categoryRepository.GetCategories();
+                foreach (var category in allCategories)
+                {
+                      categories.Add(category.Adapt<CategoryGetResponeDTO>());
+                }
+
+                return Ok(categories);
+            }
+            catch (Exception e)
+            {
+
+                _logger.LogError(exception: e, String.Format("Could not return categories for {0}", nameof(GetCategories)));
+
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
         
         [HttpGet("{id}")]

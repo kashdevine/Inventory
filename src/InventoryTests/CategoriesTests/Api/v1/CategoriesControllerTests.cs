@@ -46,7 +46,7 @@ namespace InventoryTests.CategoriesTests.Api.v1
 
             //assert
             MockCategoryRepo.Verify(cr => cr.GetCategories(), Times.Once);
-            Assert.IsType<OkObjectResult>(result);
+            Assert.IsType<OkObjectResult>(result.Result);
         }
     }
 }

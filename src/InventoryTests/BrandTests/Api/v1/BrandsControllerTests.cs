@@ -34,7 +34,7 @@ namespace InventoryTests.BrandTests.Api.v1
         {
             //arrange
             var MockBrandRepo = new Mock<IBrandRepository>();
-            MockBrandRepo.Setup(br => br.GetBrands()).Returns(SeedBrandsAsync());
+            MockBrandRepo.Setup(br => br.GetBrands()).ReturnsAsync(Utility.SeedBrands());
 
             var MockLogger = new Mock<ILogger<BrandsController>>();
 
@@ -150,17 +150,6 @@ namespace InventoryTests.BrandTests.Api.v1
             //assert
             MockBrandRepo.Verify(br => br.DeleteBrand(It.IsAny<Guid>()), Times.Once());
             Assert.IsType<NoContentResult>(result);
-        }
-
-        public static async Task<IEnumerable<Brand>> SeedBrandsAsync()
-        {
-            return new List<Brand>()
-            {
-                new Brand(){ Name = "Brand1"},
-                new Brand(){ Name = "Brand2"},
-                new Brand(){ Name = "Brand3"},
-                new Brand(){ Name = "Brand4"}
-            };
         }
     }
 }
