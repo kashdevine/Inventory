@@ -48,5 +48,26 @@ namespace InventoryTests.CategoriesTests.Api.v1
             MockCategoryRepo.Verify(cr => cr.GetCategories(), Times.Once);
             Assert.IsType<OkObjectResult>(result.Result);
         }
+
+        [Fact]
+        public async Task GetCategory_API_Returns_JsonOfCategory()
+        {
+            //arrange
+            var MockCategoryRepo = new Mock<ICategoryRepository>();
+            MockCategoryRepo.Setup(cr => cr.GetCategoryById(new Guid())).Returns(Utility.GetCategoryForId(_ctx));
+
+            var mockLogger = new Mock<ILogger<CategoriesController>>();
+
+            var categoryRepo = MockCategoryRepo.Object;
+            var loggerInjection = mockLogger.Object;
+
+            var categoryController = new CategoriesController(categoryRepo, loggerInjection);
+            //act
+            var result = await categoryController.GetCategory(new Guid());
+
+            //assert
+            MockCategoryRepo.Verify(cr => cr.GetCategoryById(new Guid()), Times.Once);
+            Assert.IsType<OkObjectResult>(result.Result);
+        }
     }
 }

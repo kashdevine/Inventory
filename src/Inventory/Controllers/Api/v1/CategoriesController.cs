@@ -35,6 +35,7 @@ namespace Inventory.Controllers.Api.v1
             var categories = new List<CategoryGetResponeDTO>();
             try
             {
+                _logger.LogInformation(String.Format("Attempting to get categories for {0}", nameof(GetCategories)));
                 var allCategories = await _categoryRepository.GetCategories();
                 foreach (var category in allCategories)
                 {
@@ -55,7 +56,25 @@ namespace Inventory.Controllers.Api.v1
         [HttpGet("{id}")]
         public async Task<ActionResult<CategoryGetResponeDTO>> GetCategory(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _logger.LogInformation(String.Format("Attempting to get category for {0} with Id {1}", nameof(GetCategory), id));
+                var category = await _categoryRepository.GetCategoryById(id);
+
+                if (category == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(category.Adapt<CategoryGetResponeDTO>());
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(exception: e, String.Format("Could not return category for {0} with Id {1}", nameof(GetCategory), id));
+
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
 
