@@ -91,5 +91,28 @@ namespace InventoryTests.CategoriesTests.Api.v1
             Assert.IsType<CreatedAtActionResult>(result.Result);
 
         }
+
+        [Fact]
+        public async Task UpdateCategory_API_Returns_JsonofCategory() 
+        {
+            //arrange
+            var testCategory = await Utility.GetCategoryForId(_ctx);
+            CategoryUpdateRequestDTO testUpdateObject = new CategoryUpdateRequestDTO() { Id = testCategory.Id, Name = testCategory.Name};
+
+            var MockCategoryRepo = new Mock<ICategoryRepository>();
+            MockCategoryRepo.Setup(cr => cr.UpdateCategory(new Inventory.Models.Category())).Returns(Utility.GetCategoryForId(_ctx));
+
+            var mockLogger = new Mock<ILogger<CategoriesController>>();
+
+            var categoryRepo = MockCategoryRepo.Object;
+            var loggerInjection = mockLogger.Object;
+
+            var categoryController = new CategoriesController(categoryRepo, loggerInjection);
+            //act
+            var result = await categoryController.UpdateCategory(testUpdateObject.Id, testUpdateObject);
+
+            //assert
+            Assert.IsType<OkObjectResult>(result.Result);
+        }
     }
 }

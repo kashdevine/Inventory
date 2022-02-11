@@ -52,8 +52,15 @@ namespace Inventory.Controllers.Api.v1
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-        
+        /// <summary>
+        /// Gets a category specified by the id.
+        /// </summary>
+        /// <param name="id">A Guid</param>
+        /// <returns>A Category.</returns>
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<CategoryGetResponeDTO>> GetCategory(Guid id)
         {
             try
@@ -77,8 +84,15 @@ namespace Inventory.Controllers.Api.v1
             }
         }
 
-
+        /// <summary>
+        /// Adds a new category.
+        /// </summary>
+        /// <param name="categoryCreateRequestDTO">A CategoryCreateRequestDTO.</param>
+        /// <returns>A updated category.</returns>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<CategoryGetResponeDTO>> CreateCategory(CategoryCreateRequestDTO categoryCreateRequestDTO)
         {
             try
@@ -98,11 +112,38 @@ namespace Inventory.Controllers.Api.v1
             }
         }
 
-
+        /// <summary>
+        /// Updates a category.
+        /// </summary>
+        /// <param name="id">A Guid.</param>
+        /// <param name="updateDTO">A CategoryUpdateRequestDTO.</param>
+        /// <returns>The updated category.</returns>
         [HttpPut("{id}")]
-        public async Task<ActionResult<CategoryGetResponeDTO>> UpdateCategory(CategoryUpdateRequestDTO categoryUpdateRequestDTO)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<CategoryGetResponeDTO>> UpdateCategory(Guid id, CategoryUpdateRequestDTO updateDTO)
         {
-            throw new NotImplementedException();
+            if (id != updateDTO.Id)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                _logger.LogInformation(String.Format("Attempting to update category for {0} with name {1}", nameof(UpdateCategory), updateDTO.Name));
+                var category = updateDTO.Adapt<Category>();
+                var updatedCategory = await _categoryRepository.UpdateCategory(category);
+
+                return Ok(updatedCategory.Adapt<CategoryGetResponeDTO>());
+            }
+            catch (Exception e)
+            {
+
+                _logger.LogError(exception: e, String.Format("Could not update category for {0} with name {1}", nameof(UpdateCategory), updateDTO.Name));
+
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
 
