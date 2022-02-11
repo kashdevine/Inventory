@@ -81,7 +81,21 @@ namespace Inventory.Controllers.Api.v1
         [HttpPost]
         public async Task<ActionResult<CategoryGetResponeDTO>> CreateCategory(CategoryCreateRequestDTO categoryCreateRequestDTO)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _logger.LogInformation(String.Format("Attempting to create category for {0} with name {1}", nameof(CreateCategory), categoryCreateRequestDTO.Name));
+                Category category = categoryCreateRequestDTO.Adapt<Category>();
+                var createdBrand = await _categoryRepository.CreateCategory(category);
+
+                return CreatedAtAction(nameof(CreateCategory), category.Adapt<CategoryGetResponeDTO>());
+            }
+
+            catch (Exception e)
+            {
+                _logger.LogError(exception: e, String.Format("Could not return category for {0} with name {1}", nameof(CreateCategory), categoryCreateRequestDTO.Name));
+
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
 

@@ -11,6 +11,7 @@ using Inventory.Contracts;
 using Microsoft.Extensions.Logging;
 using Inventory.Controllers.Api.v1;
 using Microsoft.AspNetCore.Mvc;
+using Inventory.Models.DTOs.Category;
 
 namespace InventoryTests.CategoriesTests.Api.v1
 {
@@ -68,6 +69,27 @@ namespace InventoryTests.CategoriesTests.Api.v1
             //assert
             MockCategoryRepo.Verify(cr => cr.GetCategoryById(new Guid()), Times.Once);
             Assert.IsType<OkObjectResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task CreateCategory_API_Returns_JsonofCategory()
+        {
+            //arrange
+            var MockCategoryRepo = new Mock<ICategoryRepository>();
+            MockCategoryRepo.Setup(cr => cr.CreateCategory(new Inventory.Models.Category())).Returns(Utility.GetCategoryForId(_ctx));
+
+            var mockLogger = new Mock<ILogger<CategoriesController>>();
+
+            var categoryRepo = MockCategoryRepo.Object;
+            var loggerInjection = mockLogger.Object;
+
+            var categoryController = new CategoriesController(categoryRepo, loggerInjection);
+            //act
+            var result = await categoryController.CreateCategory(new CategoryCreateRequestDTO() { Name = "testing"});
+
+            //assert
+            Assert.IsType<CreatedAtActionResult>(result.Result);
+
         }
     }
 }
