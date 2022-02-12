@@ -146,11 +146,34 @@ namespace Inventory.Controllers.Api.v1
             }
         }
 
-
+        /// <summary>
+        /// Deletes a category specified by the id.
+        /// </summary>
+        /// <param name="id">A Guid</param>
+        /// <returns>A 204 response if delete is successful.</returns>
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteCategory(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _logger.LogInformation(String.Format("Attempting to delete category for {0} with id {1}", nameof(UpdateCategory), id));
+                var isDeleted = await _categoryRepository.DeleteCategory(id);
+                if (!isDeleted)
+                {
+                    return NotFound();
+                }
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+
+                _logger.LogError(exception: e, String.Format("Could not delete category for {0} with id {1}", nameof(DeleteCategory), id));
+
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
     }
 }

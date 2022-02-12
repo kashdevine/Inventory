@@ -159,7 +159,7 @@ namespace Inventory.Controllers.Api.v1
         /// <param name="id">A Guid.</param>
         /// <returns>A 204 response if the delete was successful.</returns>
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteBrand(Guid id)
