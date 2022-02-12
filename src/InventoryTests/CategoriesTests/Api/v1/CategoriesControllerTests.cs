@@ -114,5 +114,27 @@ namespace InventoryTests.CategoriesTests.Api.v1
             //assert
             Assert.IsType<OkObjectResult>(result.Result);
         }
+
+        [Fact]
+        public async Task DeleteCategory_API_Returns_NoContentIfCategoryDeleted()
+        {
+            //arrange
+            var testCategory = await Utility.GetCategoryForId(_ctx);
+
+            var MockCategoryRepo = new Mock<ICategoryRepository>();
+            MockCategoryRepo.Setup(cr => cr.DeleteCategory(testCategory.Id)).ReturnsAsync(true);
+
+            var mockLogger = new Mock<ILogger<CategoriesController>>();
+
+            var categoryRepo = MockCategoryRepo.Object;
+            var loggerInjection = mockLogger.Object;
+
+            var categoryController = new CategoriesController(categoryRepo, loggerInjection);
+            //act
+            var result = await categoryController.DeleteCategory(testCategory.Id);
+
+            //assert
+            Assert.IsType<NoContentResult>(result);
+        }
     }
 }
