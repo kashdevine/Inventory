@@ -47,5 +47,27 @@ namespace InventoryTests.VendorTests.Api.v1
             MockVendorRepo.Verify(vr => vr.GetVendors(), Times.Once);
             Assert.IsType<OkObjectResult>(result.Result);
         }
+
+        [Fact]
+        public async Task GetVendor_API_Returns_JsonOfVendor()
+        {
+            //arrange
+            var MockVendorRepo = new Mock<IVendorRepository>();
+            MockVendorRepo.Setup(vr => vr.GetVendorById(new Guid())).Returns(Utility.GetVendorForId(_ctx));
+
+            var MockLogger = new Mock<ILogger<VendorsController>>();
+
+            var VendorRepo = MockVendorRepo.Object;
+            var LoggerInjection = MockLogger.Object;
+
+            var _brandsController = new VendorsController(VendorRepo, LoggerInjection);
+
+            //act
+            var result = await _brandsController.GetVendor(new Guid());
+
+            //assert
+            MockVendorRepo.Verify(vr => vr.GetVendorById(It.IsAny<Guid>()), Times.Once);
+            Assert.IsType<OkObjectResult>(result.Result);
+        }
     }
 }
