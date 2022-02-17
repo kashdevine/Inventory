@@ -3,9 +3,13 @@ using Inventory.Models.DTOs.Vendor;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Mapster;
+using Inventory.Models;
 
 namespace Inventory.Controllers.Api.v1
 {
+    /// <summary>
+    /// API endpoints for the vendors.
+    /// </summary>
     [Route("api/v1/[controller]")]
     [ApiController]
     public class VendorsController : ControllerBase
@@ -61,7 +65,7 @@ namespace Inventory.Controllers.Api.v1
         {
             try
             {
-                _logger.LogInformation(String.Format("Attempting to get vendor for {0} with id {1}", nameof(GetVendors), id));
+                _logger.LogInformation(String.Format("Attempting to get vendor for {0} with id {1}", nameof(GetVendor), id));
                 var vendorResponse =await _vendorRepository.GetVendorById(id);
                 if(vendorResponse == null)
                 {
@@ -72,16 +76,30 @@ namespace Inventory.Controllers.Api.v1
             }
             catch (Exception e)
             {
-                _logger.LogError(exception: e, String.Format("Failded to get vendor for {0} with id {1}", nameof(GetVendors), id));
+                _logger.LogError(exception: e, String.Format("Failded to get vendor for {0} with id {1}", nameof(GetVendor), id));
 
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
-        //Create
+        [HttpPost]
         public async Task<ActionResult<VendorGetResponseDTO>> CreateVendor(VendorCreateRequestDTO createDTO)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _logger.LogInformation(String.Format("Attempting to create vendor for {0}", nameof(CreateVendor)));
+                var createResponse = await _vendorRepository.CreateVendor(createDTO.Adapt<Vendor>());
+
+                return CreatedAtAction(nameof(CreateVendor), createResponse.Adapt<VendorGetResponseDTO>());
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(exception: e, String.Format("Failded to create vendor for {0}", nameof(CreateVendor)));
+
+                return StatusCode(StatusCodes.Status500InternalServerError);
+
+            }
         }
 
         //Update

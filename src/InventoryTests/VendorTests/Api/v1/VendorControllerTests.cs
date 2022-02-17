@@ -11,6 +11,8 @@ using Inventory.Contracts;
 using Inventory.Controllers.Api.v1;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
+using Inventory.Models.DTOs.Vendor;
+using Inventory.Models;
 
 namespace InventoryTests.VendorTests.Api.v1
 {
@@ -68,6 +70,29 @@ namespace InventoryTests.VendorTests.Api.v1
             //assert
             MockVendorRepo.Verify(vr => vr.GetVendorById(It.IsAny<Guid>()), Times.Once);
             Assert.IsType<OkObjectResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task CreateVendor_API_Returns_JsonOfVendor()
+        {
+            //arrange
+            var mockCreateDTO = new VendorCreateRequestDTO();
+            var MockVendorRepo = new Mock<IVendorRepository>();
+            MockVendorRepo.Setup(vr => vr.CreateVendor(It.IsAny<Vendor>())).Returns(Utility.GetVendorForId(_ctx));
+
+            var MockLogger = new Mock<ILogger<VendorsController>>();
+
+            var VendorRepo = MockVendorRepo.Object;
+            var LoggerInjection = MockLogger.Object;
+
+            var _brandsController = new VendorsController(VendorRepo, LoggerInjection);
+
+            //act
+            var result = await _brandsController.CreateVendor(mockCreateDTO);
+
+            //assert
+            MockVendorRepo.Verify(vr => vr.CreateVendor(It.IsAny<Vendor>()), Times.Once);
+            Assert.IsType<CreatedAtActionResult>(result.Result);
         }
     }
 }
