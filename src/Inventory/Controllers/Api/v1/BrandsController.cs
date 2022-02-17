@@ -31,7 +31,7 @@ namespace Inventory.Controllers.Api.v1
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<Brand>>> GetBrands()
+        public async Task<ActionResult<IEnumerable<BrandGetResponseDTO>>> GetBrands()
         {
             var brands = new List<BrandGetResponseDTO>();
 
@@ -67,7 +67,7 @@ namespace Inventory.Controllers.Api.v1
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Brand>> GetBrand(Guid id)
+        public async Task<ActionResult<BrandGetResponseDTO>> GetBrand(Guid id)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace Inventory.Controllers.Api.v1
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Brand>> CreateBrand(BrandCreateRequestDTO createDTO)
+        public async Task<ActionResult<BrandGetResponseDTO>> CreateBrand(BrandCreateRequestDTO createDTO)
         {
             try
             {
@@ -128,7 +128,7 @@ namespace Inventory.Controllers.Api.v1
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Brand>> UpdateBrand(Guid id,BrandUpdateRequestDTO updateDTO)
+        public async Task<ActionResult<BrandGetResponseDTO>> UpdateBrand(Guid id,BrandUpdateRequestDTO updateDTO)
         {
             if (id != updateDTO.Id)
             {
