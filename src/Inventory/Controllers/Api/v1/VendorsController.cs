@@ -82,7 +82,15 @@ namespace Inventory.Controllers.Api.v1
             }
         }
 
+        /// <summary>
+        /// Creates a new vendor.
+        /// </summary>
+        /// <param name="createDTO">A VendorCreateRequestDTO</param>
+        /// <returns>Newly created vendor.</returns>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<VendorGetResponseDTO>> CreateVendor(VendorCreateRequestDTO createDTO)
         {
             try
@@ -102,8 +110,36 @@ namespace Inventory.Controllers.Api.v1
             }
         }
 
-        //Update
-        public async Task<ActionResult<VendorGetResponseDTO>> UpdateVendor(VendorUpdateRequestDTO updateDTO) { throw new NotImplementedException(); }
+        /// <summary>
+        /// Updates an existing vedor.
+        /// </summary>
+        /// <param name="id">A Guid.</param>
+        /// <param name="updateDTO">A VendorUpdateRequestDTO</param>
+        /// <returns>The updated vendor.s</returns>
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<VendorGetResponseDTO>> UpdateVendor(Guid id,VendorUpdateRequestDTO updateDTO) 
+        { 
+            if (id != updateDTO.Id)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                _logger.LogInformation(String.Format("Attempting to update vendor for {0} with id {1}.", nameof(UpdateVendor), id));
+                var updatedVendor = await _vendorRepository.UpdateVendor(updateDTO.Adapt<Vendor>());
+                return Ok(updatedVendor.Adapt<VendorGetResponseDTO>());
+            }
+            catch (Exception e)
+            {
+
+                _logger.LogError(exception: e, String.Format("Failded to update vendor for {0} with id {1}", nameof(CreateVendor), id));
+
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
 
         //Delete
         public async Task<IActionResult> DeleteVendor(Guid id) { throw new NotImplementedException(); }
