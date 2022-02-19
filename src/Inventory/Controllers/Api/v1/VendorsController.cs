@@ -24,7 +24,7 @@ namespace Inventory.Controllers.Api.v1
         }
 
         /// <summary>
-        /// Gets all vendors
+        /// Gets all vendors in the db.
         /// </summary>
         /// <returns>A list of vendors.</returns>
         [HttpGet]
@@ -141,7 +141,34 @@ namespace Inventory.Controllers.Api.v1
             }
         }
 
-        //Delete
-        public async Task<IActionResult> DeleteVendor(Guid id) { throw new NotImplementedException(); }
+        /// <summary>
+        /// Deletes an existing vendor.
+        /// </summary>
+        /// <param name="id">A Guid.</param>
+        /// <returns>A 204 response if the delete was successful.</returns>
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteVendor(Guid id) 
+        {
+            try
+            {
+                _logger.LogInformation(String.Format("Attempting to delete vendor for {0} with id {1}.", nameof(DeleteVendor), id));
+                var deleted =await _vendorRepository.DeleteVendor(id);
+                if (!deleted)
+                {
+                    return NotFound();
+                }
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+
+                _logger.LogError(exception: e, String.Format("Failded to delete vendor for {0} with id {1}", nameof(DeleteVendor), id));
+
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }

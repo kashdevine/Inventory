@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Mapster;
 using Inventory.Models.DTOs.Brand;
-using Microsoft.Extensions.Logging;
 
 namespace Inventory.Controllers.Api.v1
 {
@@ -61,7 +60,7 @@ namespace Inventory.Controllers.Api.v1
         /// <summary>
         /// Returns the brand specified by the id.
         /// </summary>
-        /// <param name="id">A Guid</param>
+        /// <param name="id">A Guid.</param>
         /// <returns>A brand.</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -71,7 +70,7 @@ namespace Inventory.Controllers.Api.v1
         {
             try
             {
-                _logger.LogInformation(String.Format("Attempting to get brand for {0} with Id {1}", nameof(GetBrands), id));
+                _logger.LogInformation(String.Format("Attempting to get brand for {0} with Id {1}", nameof(GetBrand), id));
                 var brand = await _brandRepository.GetBrandById(id);
 
                 if (brand == null)
@@ -137,7 +136,7 @@ namespace Inventory.Controllers.Api.v1
 
             try
             {
-                _logger.LogInformation(String.Format("Attempting to update brand for {0} with name {1}", nameof(CreateBrand), updateDTO.Name));
+                _logger.LogInformation(String.Format("Attempting to update brand for {0} with name {1}", nameof(UpdateBrand), updateDTO.Name));
                 var brand = updateDTO.Adapt<Brand>();
                 var updatedBrand = await _brandRepository.UpdateBrand(brand);
 
@@ -166,7 +165,7 @@ namespace Inventory.Controllers.Api.v1
         {
             try
             {
-                _logger.LogInformation(String.Format("Attempting to delete brand for {0} with id {1}", nameof(CreateBrand), id));
+                _logger.LogInformation(String.Format("Attempting to delete brand for {0} with id {1}", nameof(DeleteBrand), id));
                 var deleted = await _brandRepository.DeleteBrand(id);
 
                 if (!deleted)
@@ -178,7 +177,7 @@ namespace Inventory.Controllers.Api.v1
             }
             catch(Exception e)
             {
-                _logger.LogError(exception: e, String.Format("Could not delete brand for {0} with Id {1}", nameof(GetBrand), id));
+                _logger.LogError(exception: e, String.Format("Could not delete brand for {0} with Id {1}", nameof(DeleteBrand), id));
 
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
