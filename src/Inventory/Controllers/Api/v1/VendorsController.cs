@@ -24,7 +24,7 @@ namespace Inventory.Controllers.Api.v1
         }
 
         /// <summary>
-        /// Gets all vendors
+        /// Gets all vendors in the db.
         /// </summary>
         /// <returns>A list of vendors.</returns>
         [HttpGet]
@@ -82,7 +82,15 @@ namespace Inventory.Controllers.Api.v1
             }
         }
 
+        /// <summary>
+        /// Creates a new vendor.
+        /// </summary>
+        /// <param name="createDTO">A VendorCreateRequestDTO</param>
+        /// <returns>Newly created vendor.</returns>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<VendorGetResponseDTO>> CreateVendor(VendorCreateRequestDTO createDTO)
         {
             try
@@ -102,10 +110,65 @@ namespace Inventory.Controllers.Api.v1
             }
         }
 
-        //Update
-        public async Task<ActionResult<VendorGetResponseDTO>> UpdateVendor(VendorUpdateRequestDTO updateDTO) { throw new NotImplementedException(); }
+        /// <summary>
+        /// Updates an existing vedor.
+        /// </summary>
+        /// <param name="id">A Guid.</param>
+        /// <param name="updateDTO">A VendorUpdateRequestDTO</param>
+        /// <returns>The updated vendor.s</returns>
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<VendorGetResponseDTO>> UpdateVendor(Guid id,VendorUpdateRequestDTO updateDTO) 
+        { 
+            if (id != updateDTO.Id)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                _logger.LogInformation(String.Format("Attempting to update vendor for {0} with id {1}.", nameof(UpdateVendor), id));
+                var updatedVendor = await _vendorRepository.UpdateVendor(updateDTO.Adapt<Vendor>());
+                return Ok(updatedVendor.Adapt<VendorGetResponseDTO>());
+            }
+            catch (Exception e)
+            {
 
-        //Delete
-        public async Task<IActionResult> DeleteVendor(Guid id) { throw new NotImplementedException(); }
+                _logger.LogError(exception: e, String.Format("Failded to update vendor for {0} with id {1}", nameof(CreateVendor), id));
+
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>
+        /// Deletes an existing vendor.
+        /// </summary>
+        /// <param name="id">A Guid.</param>
+        /// <returns>A 204 response if the delete was successful.</returns>
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteVendor(Guid id) 
+        {
+            try
+            {
+                _logger.LogInformation(String.Format("Attempting to delete vendor for {0} with id {1}.", nameof(DeleteVendor), id));
+                var deleted =await _vendorRepository.DeleteVendor(id);
+                if (!deleted)
+                {
+                    return NotFound();
+                }
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+
+                _logger.LogError(exception: e, String.Format("Failded to delete vendor for {0} with id {1}", nameof(DeleteVendor), id));
+
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }
