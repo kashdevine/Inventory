@@ -40,10 +40,10 @@ namespace InventoryTests.VendorTests.Api.v1
             var VendorRepo = MockVendorRepo.Object;
             var LoggerInjection = MockLogger.Object;
 
-            var _brandsController = new VendorsController(VendorRepo, LoggerInjection);
+            var _vendorsController = new VendorsController(VendorRepo, LoggerInjection);
 
             //act
-            var result = await _brandsController.GetVendors();
+            var result = await _vendorsController.GetVendors();
 
             //assert
             MockVendorRepo.Verify(vr => vr.GetVendors(), Times.Once);
@@ -62,10 +62,10 @@ namespace InventoryTests.VendorTests.Api.v1
             var VendorRepo = MockVendorRepo.Object;
             var LoggerInjection = MockLogger.Object;
 
-            var _brandsController = new VendorsController(VendorRepo, LoggerInjection);
+            var _vendorsController = new VendorsController(VendorRepo, LoggerInjection);
 
             //act
-            var result = await _brandsController.GetVendor(new Guid());
+            var result = await _vendorsController.GetVendor(new Guid());
 
             //assert
             MockVendorRepo.Verify(vr => vr.GetVendorById(It.IsAny<Guid>()), Times.Once);
@@ -85,10 +85,10 @@ namespace InventoryTests.VendorTests.Api.v1
             var VendorRepo = MockVendorRepo.Object;
             var LoggerInjection = MockLogger.Object;
 
-            var _brandsController = new VendorsController(VendorRepo, LoggerInjection);
+            var _vendorsController = new VendorsController(VendorRepo, LoggerInjection);
 
             //act
-            var result = await _brandsController.CreateVendor(mockCreateDTO);
+            var result = await _vendorsController.CreateVendor(mockCreateDTO);
 
             //assert
             MockVendorRepo.Verify(vr => vr.CreateVendor(It.IsAny<Vendor>()), Times.Once);
@@ -108,10 +108,10 @@ namespace InventoryTests.VendorTests.Api.v1
             var VendorRepo = MockVendorRepo.Object;
             var LoggerInjection = MockLogger.Object;
 
-            var _brandsController = new VendorsController(VendorRepo, LoggerInjection);
+            var _vendorsController = new VendorsController(VendorRepo, LoggerInjection);
 
             //act
-            var result = await _brandsController.UpdateVendor(new Guid(),mockCreateDTO);
+            var result = await _vendorsController.UpdateVendor(new Guid(),mockCreateDTO);
 
             //assert
             MockVendorRepo.Verify(vr => vr.UpdateVendor(It.IsAny<Vendor>()), Times.Once);
@@ -130,10 +130,10 @@ namespace InventoryTests.VendorTests.Api.v1
             var VendorRepo = MockVendorRepo.Object;
             var LoggerInjection = MockLogger.Object;
 
-            var _brandsController = new VendorsController(VendorRepo, LoggerInjection);
+            var _vendorsController = new VendorsController(VendorRepo, LoggerInjection);
 
             //act
-            var result = await _brandsController.DeleteVendor(new Guid());
+            var result = await _vendorsController.DeleteVendor(new Guid());
 
             //assert
             MockVendorRepo.Verify(vr => vr.DeleteVendor(It.IsAny<Guid>()), Times.Once);
