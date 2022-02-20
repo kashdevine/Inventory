@@ -2,6 +2,7 @@
 using Inventory.Models.DTOs.Item;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Mapster;
 
 namespace Inventory.Controllers.Api.v1
 {
@@ -24,7 +25,22 @@ namespace Inventory.Controllers.Api.v1
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ItemGetResponseDTO>>> GetItems()
         {
-            throw new NotImplementedException();
+            var Items = new List<ItemGetResponseDTO>();
+            try
+            {
+                _logger.LogInformation(String.Format("Attemping to items {0}", nameof(GetItems)));
+                var itemsDb = await _itemRepository.GetItems();
+                foreach (var item in itemsDb)
+                {
+                    Items.Add(item.Adapt<ItemGetResponseDTO>());
+                }
+                return Ok(Items);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(String.Format("Failed to get items {0}.", nameof(GetItems)));
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [HttpGet("{id}")]
