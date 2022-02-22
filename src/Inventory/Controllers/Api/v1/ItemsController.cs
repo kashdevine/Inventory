@@ -3,6 +3,7 @@ using Inventory.Models.DTOs.Item;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Mapster;
+using Inventory.Models;
 
 namespace Inventory.Controllers.Api.v1
 {
@@ -22,7 +23,14 @@ namespace Inventory.Controllers.Api.v1
             _logger = logger;
         }
 
+        /// <summary>
+        /// Gets all vendors in the db.
+        /// </summary>
+        /// <returns>A list of vendors.</returns>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<ItemGetResponseDTO>>> GetItems()
         {
             var Items = new List<ItemGetResponseDTO>();
@@ -43,16 +51,56 @@ namespace Inventory.Controllers.Api.v1
             }
         }
 
+        /// <summary>
+        /// Gets the item specified by the id.
+        /// </summary>
+        /// <param name="id">A Guid.</param>
+        /// <returns>The specified item.</returns>
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ItemGetResponseDTO>> GetItem(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _logger.LogInformation(String.Format("Attempting to get item at {0} with id {1}", nameof(GetItem),id));
+                var itemResponse =await _itemRepository.GetItemById(id);
+                if (itemResponse == null)
+                {
+                    return NotFound();
+                }
+                return Ok(itemResponse.Adapt<ItemGetResponseDTO>());
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(exception: e, String.Format("Failed to get vendor at {0} with id {1}", nameof(GetItem), id));
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
+        /// <summary>
+        /// Creates a new item.
+        /// </summary>
+        /// <param name="createDTO">A ItemCreateRequestDTO.</param>
+        /// <returns>The newly created item.</returns>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ItemGetResponseDTO>> CreateItem(ItemCreateRequestDTO createDTO)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _logger.LogInformation(String.Format("Attempting to create a new item at {0}", nameof(CreateItem)));
+                var itemResponse = await _itemRepository.CreateItem(createDTO.Adapt<Item>());
+                return CreatedAtAction(nameof(CreateItem), itemResponse.Adapt<ItemGetResponseDTO>());
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(String.Format("Failed to create a new item at {0}", nameof(CreateItem)));
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [HttpPut]
