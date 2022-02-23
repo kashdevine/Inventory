@@ -103,7 +103,16 @@ namespace Inventory.Controllers.Api.v1
             }
         }
 
+        /// <summary>
+        /// Updates an existing item.
+        /// </summary>
+        /// <param name="id">A Guid.</param>
+        /// <param name="updateDTO">A ItemUpdateRequestDTO</param>
+        /// <returns>The updated item.</returns>
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ItemGetResponseDTO>> UpdateItem(Guid id, ItemUpdateRequestDTO updateDTO)
         {
             throw new NotImplementedException();
