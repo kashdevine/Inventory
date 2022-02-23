@@ -50,6 +50,8 @@ namespace Inventory.Models
         [Display(Name = "Maximum Stock Threshold")]
         public int? MaxStockThreshold { get; set; }
 
+        public string? ModelId { get; set; }
+
         public DateTime Created { get; set; }
 
         public DateTime Updated { get; set; }

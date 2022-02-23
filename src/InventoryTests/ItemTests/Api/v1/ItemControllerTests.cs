@@ -12,6 +12,8 @@ using Castle.Core.Logging;
 using Inventory.Controllers.Api.v1;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
+using Inventory.Models;
+using Inventory.Models.DTOs.Item;
 
 namespace InventoryTests.ItemTests.Api.v1
 {
@@ -48,6 +50,51 @@ namespace InventoryTests.ItemTests.Api.v1
             //assert
             MockItemRepo.Verify(ir => ir.GetItems(), Times.Once);
             Assert.IsType<OkObjectResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task GetItem_API_Returns_JsonofItem()
+        {
+            //arrange
+            var MockItemRepo = new Mock<IItemRepository>();
+            MockItemRepo.Setup(ir => ir.GetItemById(It.IsAny<Guid>())).Returns(Utility.GetItemForId(_ctx));
+
+            var MockLogger = new Mock<ILogger<ItemsController>>();
+
+            var ItemRepo = MockItemRepo.Object;
+            var LoggerInjection = MockLogger.Object;
+
+            var itemsController = new ItemsController(MockItemRepo.Object, LoggerInjection);
+            
+            //act
+            var result = await itemsController.GetItem(new Guid());
+
+            //assert
+            MockItemRepo.Verify(ir => ir.GetItemById(It.IsAny<Guid>()), Times.Once);
+            Assert.IsType<OkObjectResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task CreateItem_API_Returns_JsonOfItem()
+        {
+            //arrange
+            var mockCreateDTO = new ItemCreateRequestDTO();
+            var MockItemRepo = new Mock<IItemRepository>();
+            MockItemRepo.Setup(ir => ir.CreateItem(It.IsAny<Item>())).Returns(Utility.GetItemForId(_ctx));
+
+            var MockLogger = new Mock<ILogger<ItemsController>>();
+
+            var ItemRepo = MockItemRepo.Object;
+            var LoggerInjection = MockLogger.Object;
+
+            var itemsController = new ItemsController(MockItemRepo.Object, LoggerInjection);
+            
+            //act
+            var result = await itemsController.CreateItem(mockCreateDTO);
+
+            //assert
+            MockItemRepo.Verify(ir => ir.CreateItem(It.IsAny<Item>()), Times.Once);
+            Assert.IsType<CreatedAtActionResult>(result.Result);
         }
     }
 }

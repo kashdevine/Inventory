@@ -111,7 +111,7 @@ namespace Inventory.Controllers.Api.v1
         }
 
         /// <summary>
-        /// Updates an existing vedor.
+        /// Updates an existing vendor.
         /// </summary>
         /// <param name="id">A Guid.</param>
         /// <param name="updateDTO">A VendorUpdateRequestDTO</param>
