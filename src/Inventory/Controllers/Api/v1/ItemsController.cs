@@ -109,13 +109,34 @@ namespace Inventory.Controllers.Api.v1
         /// <param name="id">A Guid.</param>
         /// <param name="updateDTO">A ItemUpdateRequestDTO</param>
         /// <returns>The updated item.</returns>
-        [HttpPut]
+        [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ItemGetResponseDTO>> UpdateItem(Guid id, ItemUpdateRequestDTO updateDTO)
         {
-            throw new NotImplementedException();
+            if (id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            if (id != updateDTO.Id)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                _logger.LogInformation(String.Format("Attempting to update item at {0} with id {1}", nameof(UpdateItem), id));
+                var updateItem = await _itemRepository.UpdateItem(updateDTO.Adapt<Item>());
+                return Ok(updateItem.Adapt<ItemGetResponseDTO>());
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(String.Format("Failed to update item at {0} with id {1}", nameof(UpdateItem), id));
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
         }
 
         [HttpDelete("{id}")]

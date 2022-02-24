@@ -8,7 +8,6 @@ using Moq;
 using Inventory.Data;
 using Microsoft.EntityFrameworkCore;
 using Inventory.Contracts;
-using Castle.Core.Logging;
 using Inventory.Controllers.Api.v1;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
@@ -95,6 +94,33 @@ namespace InventoryTests.ItemTests.Api.v1
             //assert
             MockItemRepo.Verify(ir => ir.CreateItem(It.IsAny<Item>()), Times.Once);
             Assert.IsType<CreatedAtActionResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task UpdateItem_API_Returns_JsonOfUpdatedItem()
+        {
+            //arrange
+            var mockCreateDTO = new ItemUpdateRequestDTO();
+            var itemWithGuid = await Utility.GetItemForId(_ctx);
+
+            mockCreateDTO.Id = itemWithGuid.Id;
+
+            var MockItemRepo = new Mock<IItemRepository>();
+            MockItemRepo.Setup(ir => ir.UpdateItem(It.IsAny<Item>())).Returns(Utility.GetItemForId(_ctx));
+
+            var MockLogger = new Mock<ILogger<ItemsController>>();
+
+            var ItemRepo = MockItemRepo.Object;
+            var LoggerInjection = MockLogger.Object;
+
+            var itemsController = new ItemsController(MockItemRepo.Object, LoggerInjection);
+
+            //act
+            var result = await itemsController.UpdateItem(itemWithGuid.Id, mockCreateDTO);
+
+            //assert
+            MockItemRepo.Verify(ir => ir.UpdateItem(It.IsAny<Item>()), Times.Once);
+            Assert.IsType<OkObjectResult>(result.Result);
         }
     }
 }
