@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Moq;
@@ -96,7 +93,7 @@ namespace InventoryTests.VendorTests.Api.v1
         }
 
         [Fact]
-        public async Task UpdateVendor_API_Returns_JsonOfUPdatedVendor()
+        public async Task UpdateVendor_API_Returns_JsonOfUpdatedVendor()
         {
             //arrange
             var mockCreateDTO = new VendorUpdateRequestDTO();
