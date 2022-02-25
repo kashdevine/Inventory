@@ -139,10 +139,32 @@ namespace Inventory.Controllers.Api.v1
 
         }
 
+        /// <summary>
+        /// Deletes an existing item.
+        /// </summary>
+        /// <param name="id">A Guid.</param>
+        /// <returns>A 204 response if the delete was successful.</returns>
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteItem(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _logger.LogInformation(String.Format("Attempting to delete item at {0} with id {1}.", nameof(DeleteItem), id));
+                var deleted = await _itemRepository.DeleteItem(id);
+                if (!deleted)
+                {
+                    return NotFound();
+                }
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(exception: e, String.Format("Failed to delete item at {0} with id {1}.", nameof(DeleteItem), id));
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
     }
 }

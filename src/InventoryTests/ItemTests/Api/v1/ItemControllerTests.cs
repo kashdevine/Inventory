@@ -122,5 +122,27 @@ namespace InventoryTests.ItemTests.Api.v1
             MockItemRepo.Verify(ir => ir.UpdateItem(It.IsAny<Item>()), Times.Once);
             Assert.IsType<OkObjectResult>(result.Result);
         }
+
+        [Fact]
+        public async Task DeleteItem_API_Returns_TrueIfExistingItemIsDeleted()
+        {
+            //arrange
+            var MockItemRepo = new Mock<IItemRepository>();
+            MockItemRepo.Setup(ir => ir.DeleteItem(It.IsAny<Guid>())).ReturnsAsync(true);
+
+            var MockLogger = new Mock<ILogger<ItemsController>>();
+
+            var ItemRepo = MockItemRepo.Object;
+            var LoggerInjection = MockLogger.Object;
+
+            var itemsController = new ItemsController(MockItemRepo.Object, LoggerInjection);
+
+            //act
+            var result = await itemsController.DeleteItem(new Guid());
+
+            //assert
+            MockItemRepo.Verify(ir => ir.DeleteItem(It.IsAny<Guid>()), Times.Once);
+            Assert.IsType<NoContentResult>(result);
+        }
     }
 }
