@@ -2,9 +2,16 @@ using Inventory.Contracts;
 using Inventory.Data;
 using Inventory.Services;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((ctx, config) =>
+{
+    config.MinimumLevel.Information();
+    config.WriteTo.Console();
+});
 
 // Add services to the container.
 
