@@ -13,6 +13,9 @@ builder.Host.UseSerilog((ctx, config) =>
     config.WriteTo.Console();
 });
 
+//TODO: Configure Poly
+//TODO: Configure Swagger
+
 // Add services to the container.
 
 builder.Services.AddControllers();
