@@ -1,5 +1,6 @@
 using Inventory.Contracts;
 using Inventory.Data;
+using Inventory.Policies;
 using Inventory.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -13,7 +14,7 @@ builder.Host.UseSerilog((ctx, config) =>
     config.WriteTo.Console();
 });
 
-//TODO: Configure Poly
+builder.Services.AddSingleton(new ServerPolicy().RetryDbForever);
 //TODO: Configure Swagger
 
 // Add services to the container.
