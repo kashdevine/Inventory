@@ -3,11 +3,13 @@ using Inventory.Data;
 using Inventory.Policies;
 using Inventory.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddLogging();
 builder.Host.UseSerilog((ctx, config) =>
 {
     config.MinimumLevel.Information();
@@ -15,15 +17,19 @@ builder.Host.UseSerilog((ctx, config) =>
 });
 
 builder.Services.AddSingleton(new ServerPolicy().RetryDbForever);
-//TODO: Configure Swagger
-
-// Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddLogging();
+builder.Services.AddSwaggerGen(opt =>
+{
+    opt.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "Inventory API",
+        Description = "An API for managing an inventory system."
+    });
+});
 
 builder.Services.AddHealthChecks();
 
