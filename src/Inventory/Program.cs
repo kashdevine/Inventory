@@ -12,8 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLogging();
 builder.Host.UseSerilog((ctx, config) =>
 {
-    config.MinimumLevel.Information();
-    config.WriteTo.Console();
+    config.MinimumLevel.Information()
+    .Enrich.FromLogContext()
+    .WriteTo.Console();
 });
 
 builder.Services.AddSingleton(new ServerPolicy().RetryDbForever);
